@@ -15,6 +15,7 @@ async def infer(request : NLQRequest):
         natural_language_query=request.natural_language_query,
         tables=request.tables,
         columns=request.columns,
-        clarifications=request.clarifications
+        clarifications=request.clarifications,
+        model=request.model
     )
     return engine.generate()
