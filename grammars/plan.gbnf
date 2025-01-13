@@ -1,0 +1,58 @@
+################################################################################
+# GBNF grammar for a top-down "query plan" DSL, allowing subqueries.
+# Uses a "whitespace rule" (ws?) and "ws?" around tokens to handle newlines/spaces.
+# Each rule is defined on a SINGLE LINE to avoid llama.cpp parser issues.
+################################################################################
+
+root ::= ws? "PLAN:" ws? plan-content ws?
+
+plan-content ::= subquery-section? ws? query-block ws?
+
+subquery-section ::= ws? "SUBQUERIES:" ws? subquery-list ws?
+
+subquery-list ::= subquery-def (ws? subquery-def)*
+
+subquery-def ::= ws? "SUBQUERY" ws? identifier ws? ":" ws? query-block ws?
+
+query-block ::= ws? "TABLES:" ws? table-list ws? "SELECT:" ws? select-list ws? ("WHERE:" ws? where-clause ws?)? ("GROUP_BY:" ws? group-by-list ws?)? ("HAVING:" ws? having-clause ws?)? ("ORDER_BY:" ws? order-by-list ws?)? ("LIMIT:" ws? integer-literal ws?)?
+
+table-list ::= table-entry (ws? "," ws? table-entry)*
+
+table-entry ::= identifier | alias-reference
+
+alias-reference ::= ws? "ALIAS(" ws? identifier ws? ")"
+
+select-list ::= select-item (ws? "," ws? select-item)*
+
+select-item ::= ( column-reference (ws? "AS" ws? identifier)? ) | ( aggregate-function ws? "(" ws? column-reference ws? ")" (ws? "AS" ws? identifier)? )
+
+aggregate-function ::= "COUNT" | "SUM" | "AVG" | "MIN" | "MAX"
+
+where-clause ::= condition ( ws? ( "AND" | "OR" ) ws? condition )*
+
+condition ::= column-reference ws? comparison-operator ws? value
+
+comparison-operator ::= "=" | "<>" | "!=" | "<" | ">" | "<=" | ">="
+
+group-by-list ::= column-reference (ws? "," ws? column-reference)*
+
+having-clause ::= condition ( ws? ( "AND" | "OR" ) ws? condition )*
+
+order-by-list ::= order-by-item (ws? "," ws? order-by-item)*
+
+order-by-item ::= column-reference (ws? ( "ASC" | "DESC" ))?
+
+column-reference ::= identifier (ws? "." ws? identifier)?
+
+value ::= string-literal | numeric-literal | "NULL" | column-reference
+
+identifier ::= [a-zA-Z_] [a-zA-Z0-9_]*
+
+string-literal ::= "\"" [^\"]* "\""
+
+numeric-literal ::= [0-9]+ ("." [0-9]+)?
+
+integer-literal ::= [0-9]+
+
+# Zero or more whitespace characters (spaces, tabs, newlines, etc.).
+ws ::= [ \r\n\t]*

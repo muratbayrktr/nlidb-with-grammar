@@ -1,0 +1,26 @@
+root         ::=  (query)+ ws
+
+query        ::= "SELECT" ws columns ws "FROM" ws table ( ws whereclause )* ";" ws
+
+columns      ::= "*" | column ( "," ws column )* ws
+
+column       ::= ident ws
+
+table        ::= ident ws
+
+whereclause  ::= "WHERE" ws (condition) ws
+
+condition    ::= ident ws comparisonop ws value ws
+
+comparisonop ::= "=" | "<" | ">" | "<=" | ">=" | "<>" | "!="
+
+value        ::= num | string
+
+ident        ::= [a-zA-Z_] [a-zA-Z0-9_]* ws
+
+num          ::= [0-9]+ ws
+
+string       ::= "'" [^']* "'" ws
+
+ws           ::= [ \t\n]*
+

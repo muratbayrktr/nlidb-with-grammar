@@ -1,0 +1,53 @@
+{# sql_prompt.jinja #}
+{% set nlq = nlq or "No Natural Language Query provided." %}
+{% set tables = tables or [] %}
+{% set columns = columns or [] %}
+{% set clarifications = clarifications or [] %}
+{% set output_format = output_format or "No output format provided." %}
+
+You are an advanced AI assistant. Your goal is to convert the following **Natural Language Query** into a **precise** SQL statement. Read the prompt carefully and follow the instructions **strictly**.
+
+======================
+## NATURAL LANGUAGE QUERY
+======================
+{{ nlq }}
+
+(You must produce exactly **one** syntactically valid SQL statement that fully addresses the user’s request. 
+Follow these ground rules:
+
+1. Only reference the provided tables and columns—do not invent or infer any that are not explicitly listed.
+2. Do not include any extra explanations, comments, or placeholders in your output.
+3. If the request is ambiguous, make the most reasonable assumptions based on the supplied clarifications.
+4. Strictly adhere to the “OUTPUT FORMAT” section when returning the query.
+
+Return no text other than the SQL statement in the specified format.)
+
+=======================
+## RELEVANT DB SCHEMA
+=======================
+Below are the **only** tables and columns you should consider. **Do not** invent any additional tables or columns.
+
+### TABLES
+{% for table in tables %}
+- {{ table }}
+{% endfor %}
+
+### COLUMNS
+{% for column in columns %}
+- {{ column }}
+{% endfor %}
+
+===============================
+## CLARIFICATIONS & EVIDENCE
+===============================
+Here is additional context or evidence that might affect how you build the query:
+{% for item in clarifications %}
+- {{ item }}
+{% endfor %}
+
+{# =======================
+## OUTPUT FORMAT
+=======================
+{{ output_format }} #}
+
+(Ensure your final output strictly follows the format above—no extra commentary or text.)
