@@ -5,6 +5,7 @@ from typing import Optional, Dict, Any
 class ModelChoices(str, Enum):
     GPT4o = "gpt-4o"
     GPTMini = "gpt-4o-mini"
+    Qwen_coder_3b = "Qwen/Qwen2.5-Coder-3B-Instruct"
 
 class Message(BaseModel):
     role: str

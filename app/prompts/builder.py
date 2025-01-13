@@ -38,8 +38,8 @@ class PromptBuilder:
         self.response_format = response_format
         return self
     
-    def set_model_temp(self, model_temp):
-        self.model_temp = model_temp
+    def set_model_type(self, model):
+        self.model = model
         return self
     
     def build(self, **kwargs):
