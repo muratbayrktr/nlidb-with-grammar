@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.classification.model import ClassificationRequest
 from app.classification.service import ClassificationEngine
-
-router = APIRouter()
+from app.classification import router
 
 classification_engine = ClassificationEngine()
 

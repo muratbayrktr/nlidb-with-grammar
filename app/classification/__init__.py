@@ -1,3 +1,3 @@
 from fastapi import APIRouter
 
-router = APIRouter( prefix="/classify_db", tags=["classify_db"] )
+router = APIRouter( prefix="/classification", tags=["classification"])
