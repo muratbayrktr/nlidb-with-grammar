@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from app.prompts.view import router as prompts_router
 from app.generation.view import router as generation_router
 from app.classification.view import router as classification_router
+from app.models.view import router as model_router
 
 import os
 
@@ -23,7 +24,8 @@ app = FastAPI(
     routes=[
         *prompts_router.routes,
         *generation_router.routes,
-        *classification_router.routes
+        *classification_router.routes,
+        *model_router.routes
     ],
     dependencies=[],
 )

@@ -67,8 +67,6 @@ class PromptBuilder:
             if self.tool_choice:
                 prompt.tool_choice = self.tool_choice
         
-        if self.response_format:
-            prompt.response_format = self.response_format
 
 
         # Eliminate null and giberrish for OpenAI compatible

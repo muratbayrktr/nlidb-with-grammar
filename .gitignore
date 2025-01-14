@@ -1,6 +1,6 @@
 .DS_Store
 .vscode
-
+*.gguf
 # Ignore db
 data/bird/dev_databases
 data/bird/dev_databases/*
