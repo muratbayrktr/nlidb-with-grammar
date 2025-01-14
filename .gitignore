@@ -4,6 +4,7 @@
 # Ignore db
 data/bird/dev_databases
 data/bird/dev_databases/*
+multi_label_model/*
 
 # Ignore .sql files at any level
 *.sql
