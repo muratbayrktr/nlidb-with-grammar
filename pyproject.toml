@@ -40,6 +40,8 @@ fastapi = "^0.115.6"
 python-dotenv = "^1.0.1"
 torch = "^2.5.1"
 transformers = "^4.48.0"
+llama-cpp-python = "^0.3.6"
+pydantic-gbnf-grammar-generator = "^0.1.1"
 
 
 [build-system]

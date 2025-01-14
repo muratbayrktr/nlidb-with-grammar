@@ -5,19 +5,19 @@ class ClassificationEngine:
     def __init__(self):
         self.models = {
             "db": {
-                "model_path": pkg_resources.files("app.classification.models").joinpath("db_logistic_model.pkl"),
-                "vectorizer_path": pkg_resources.files("app.classification.models").joinpath("db_tfidf_vectorizer.pkl"),
-                "label_mapping_path": pkg_resources.files("app.classification.models").joinpath("db_label_mapping.pkl"),
+                "model_path": pkg_resources.files("app.models").joinpath("db_logistic_model.pkl"),
+                "vectorizer_path": pkg_resources.files("app.models").joinpath("db_tfidf_vectorizer.pkl"),
+                "label_mapping_path": pkg_resources.files("app.models").joinpath("db_label_mapping.pkl"),
             },
             # "table": {
-            #     "model_path": pkg_resources.files("app.classification.models").joinpath("table_logistic_model.pkl"),
-            #     "vectorizer_path": pkg_resources.files("app.classification.models").joinpath("table_tfidf_vectorizer.pkl"),
-            #     "label_mapping_path": pkg_resources.files("app.classification.models").joinpath("table_label_mapping.pkl"),
+            #     "model_path": pkg_resources.files("app.models").joinpath("table_logistic_model.pkl"),
+            #     "vectorizer_path": pkg_resources.files("app.models").joinpath("table_tfidf_vectorizer.pkl"),
+            #     "label_mapping_path": pkg_resources.files("app.models").joinpath("table_label_mapping.pkl"),
             # },
             # "column": {
-            #     "model_path": pkg_resources.files("app.classification.models").joinpath("column_logistic_model.pkl"),
-            #     "vectorizer_path": pkg_resources.files("app.classification.models").joinpath("column_tfidf_vectorizer.pkl"),
-            #     "label_mapping_path": pkg_resources.files("app.classification.models").joinpath("column_label_mapping.pkl"),
+            #     "model_path": pkg_resources.files("app.models").joinpath("column_logistic_model.pkl"),
+            #     "vectorizer_path": pkg_resources.files("app.models").joinpath("column_tfidf_vectorizer.pkl"),
+            #     "label_mapping_path": pkg_resources.files("app.models").joinpath("column_label_mapping.pkl"),
             # },
         }       
          
