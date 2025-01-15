@@ -1,0 +1,56 @@
+{# extract_tables_prompt.jinja #}
+{% set nlq = nlq or "No Natural Language Query provided." %}
+{% set db_schema = db_schema or "No database specified." %}
+
+You are an advanced AI assistant tasked with identifying **relevant tables** from a database based on a **Natural Language Query (NLQ)**. Read the query and follow the instructions strictly.
+
+======================
+## NATURAL LANGUAGE QUERY
+======================
+{{ nlq }}
+
+========================
+## DATABASE CONTEXT
+========================
+Database: {{ db_schema }}
+
+=======================
+## YOUR TASK
+=======================
+1. Extract the **table names** that are relevant to the NLQ.
+2. Only reference tables explicitly present in the database schema.
+3. Do **not** infer or invent any table names that are not provided.
+4. Return the result in the JSON format shown below.
+
+========================
+## RESPONSE FORMAT
+========================
+Your output must strictly follow this JSON format:
+```json
+{
+  "table_names": ["table1", "table2", ...]
+}
+
+If no tables are relevant to the query, return:
+
+{
+  "table_names": []
+}
+
+==========================
+
+EXAMPLES
+
+==========================
+
+Example NLQ
+
+	“List all orders made by customers in the last 30 days.”
+
+Example Response
+
+{
+  "table_names": ["orders", "customers"]
+}
+
+(Strictly adhere to the format above. Do not include additional text in your output.)

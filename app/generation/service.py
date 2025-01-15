@@ -1,32 +1,25 @@
-from typing import List
+from typing import List, Optional
 from openai import OpenAI
 from app.prompts import PromptBuilder
 from app.prompts.model import Prompt
 from llama_cpp import Llama
 from llama_cpp.llama import Llama, LlamaGrammar
 from pydantic_gbnf_grammar_generator import generate_gbnf_grammar_and_documentation
+from pydantic import BaseModel
 import importlib.resources as pkg_resources
+from app.constants import SystemPrompts
 import os
 
-from app.generation.model import ResponseFormat
 
 class InferenceEngine:
-    def __init__(self, 
-        natural_language_query: str,
-        tables: List[str],
-        columns: List[str],
-        clarifications: List[str],
+    def __init__(self,
         model:str = "gpt-4o-mini", # or hf
-        use_response_format: bool = True
+        response_format : Optional[BaseModel] = None
     ):
-        self.natural_language_query = natural_language_query
-        self.tables = tables
-        self.columns = columns
-        self.clarifications = clarifications
         self.model = model
         self.prompt_type = None
         self.grammar = None
-        self.use_response_format = use_response_format
+        self.response_format = response_format
 
         # client probing
         if "gpt" in model:
@@ -37,12 +30,11 @@ class InferenceEngine:
             self.client = Llama(
                 model_path=pkg_resources.files("app.models").joinpath(model).as_posix(),
                 n_gpu_layers=-1,
-                n_ctx=1024,
-                
+                n_ctx=1024
                 )
             self.extra_headers = None
             self.prompt_type = "llama"
-            grammar_string, documentation = generate_gbnf_grammar_and_documentation([ResponseFormat])
+            grammar_string, documentation = generate_gbnf_grammar_and_documentation([self.response_format])
             self.grammar = LlamaGrammar.from_string(grammar_string)
         # fallback to huggingface
         else:
@@ -53,24 +45,17 @@ class InferenceEngine:
             self.prompt_type = "hf"
             self.extra_headers = {"X-Wait-For-Model": "true"}
 
-    def generate(self):
+    def generate(self, system_prompt = SystemPrompts.SQL_QUERY_GENERATION, **kwargs):
         prompt : Prompt = PromptBuilder(). \
-            set_prompt("sql_prompt.jinja"). \
+            set_prompt(system_prompt.value). \
             set_model_temp(0.3). \
             set_messages([]). \
             set_prompt_type(self.prompt_type). \
             set_model_type(self.model). \
-            build(
-                **{
-                "nlq": self.natural_language_query,
-                "tables": self.tables,
-                "columns": self.columns,
-                "clarifications": self.clarifications
-            }
-            )
+            build(**kwargs)
         if self.prompt_type == "llama":
             # Process prompt locally with Llama.cpp
-            if self.use_response_format and self.grammar:
+            if self.response_format and self.grammar:
                 response = self.client(
                     prompt = prompt["messages"][0]["content"],
                     grammar=self.grammar,
@@ -85,10 +70,10 @@ class InferenceEngine:
             }
         else:
             # OpenAI or Hugging Face processing
-            if self.use_response_format and self.prompt_type == "openai": # @TODO backup HF grammar or response_format
+            if self.response_format and self.prompt_type == "openai": # @TODO backup HF grammar or response_format
                 response = self.client.beta.chat.completions.parse(
                     **prompt, 
-                    response_format=ResponseFormat,
+                    response_format=self.response_format,
                     extra_headers=self.extra_headers
                     ).choices[0].message.parsed
             else:
