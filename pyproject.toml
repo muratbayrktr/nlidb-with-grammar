@@ -42,6 +42,7 @@ torch = "^2.5.1"
 transformers = "^4.48.0"
 llama-cpp-python = "^0.3.6"
 pydantic-gbnf-grammar-generator = "^0.1.1"
+psycopg2 = "^2.9.10"
 
 
 [build-system]

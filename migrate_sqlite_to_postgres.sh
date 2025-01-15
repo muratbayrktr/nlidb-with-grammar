@@ -3,33 +3,43 @@
 # PostgreSQL credentials
 PG_USER="postgres"
 PG_HOST="localhost"
+PG_PORT="5432"
+PG_PASSWORD=""  # Set this if your PostgreSQL user has a password
 
-# Directory containing SQLite databases (use an absolute path)
-SQLITE_DIR="$HOME/Downloads/dev_1/dev_20240627/dev_databases/dev_databases"
+# SQLite root directory (recursive search)
+SQLITE_DIR="$HOME/Downloads/dev_1"
 
-# Loop through each SQLite file in the directory
-for sqlite_file in "$SQLITE_DIR"/*/*.sqlite; do
-    # Check if the file exists (in case there are no matches)
-    if [[ ! -f "$sqlite_file" ]]; then
-        echo "No SQLite files found in $SQLITE_DIR. Skipping..."
-        continue
-    fi
+# Find all SQLite files recursively
+sqlite_files=$(find "$SQLITE_DIR" -type f -name "*.sqlite")
 
-    # Extract database name
+# Check if any SQLite files are found
+if [[ -z "$sqlite_files" ]]; then
+    echo "No SQLite files found in $SQLITE_DIR or its subdirectories."
+    exit 1
+fi
+
+# Loop through all found SQLite files
+for sqlite_file in $sqlite_files; do
+    # Extract database name from the file path
     db_name=$(basename "$sqlite_file" .sqlite)
 
-    echo "Migrating $sqlite_file to PostgreSQL database $db_name..."
+    echo "Dropping and recreating PostgreSQL database $db_name..."
+
+    # Drop the PostgreSQL database if it exists
+    PGPASSWORD="$PG_PASSWORD" psql -U "$PG_USER" -h "$PG_HOST" -p "$PG_PORT" -c "DROP DATABASE IF EXISTS \"$db_name\";" || {
+        echo "Failed to drop database $db_name"; continue;
+    }
 
     # Create the PostgreSQL database
-    PGPASSWORD="" psql -U "$PG_USER" -h "$PG_HOST" -c "CREATE DATABASE \"$db_name\";" || {
+    PGPASSWORD="$PG_PASSWORD" psql -U "$PG_USER" -h "$PG_HOST" -p "$PG_PORT" -c "CREATE DATABASE \"$db_name\";" || {
         echo "Failed to create database $db_name"; continue;
     }
 
     # Use pgloader to migrate
-    pgloader "$sqlite_file" postgresql://"$PG_USER"@"$PG_HOST"/"$db_name" || {
+    echo "Migrating $sqlite_file to PostgreSQL database $db_name..."
+    pgloader "$sqlite_file" postgresql://"$PG_USER"@"$PG_HOST":"$PG_PORT"/"$db_name" || {
         echo "Failed to migrate $sqlite_file to $db_name"; continue;
     }
 
     echo "Migration of $sqlite_file to $db_name completed."
 done
-
