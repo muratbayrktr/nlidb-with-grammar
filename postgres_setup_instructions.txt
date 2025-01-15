@@ -1,0 +1,90 @@
+
+
+Setting Up PostgreSQL and Migrating SQLite Databases
+
+1. Installing PostgreSQL
+1.1. Update your system packages:
+   sudo apt update
+   sudo apt upgrade -y
+
+1.2. Install PostgreSQL:
+   sudo apt install postgresql postgresql-contrib -y
+
+1.3. Start and enable the PostgreSQL service:
+   sudo systemctl start postgresql
+   sudo systemctl enable postgresql
+
+1.4. Access PostgreSQL:
+   Switch to the postgres user and open the PostgreSQL shell:
+   sudo -i -u postgres
+   psql
+
+1.5. Set a password for the postgres user:
+   Inside the PostgreSQL shell:
+   ALTER USER postgres PASSWORD 'your_password';
+   \\q
+
+2. Preparing SQLite Databases for Migration
+2.1. Install pgloader:
+   sudo apt install pgloader -y
+
+2.2. Ensure SQLite files are accessible:
+   Place all .sqlite files in a directory. For example:
+   ~/path_to_sqlite_databases/
+   ├── database1.sqlite
+   ├── database2.sqlite
+
+3. Automating the Migration Process
+Run the provided migration script to automate the process of migrating SQLite databases to PostgreSQL.
+
+4. Verifying the Migration
+4.1. Connect to PostgreSQL:
+   psql -U postgres -h localhost
+
+4.2. List all databases:
+   \\l
+
+4.3. Connect to a database:
+   \\c database_name
+
+4.4. View the tables:
+   \\dt
+
+4.5. Query a table:
+   SELECT * FROM table_name LIMIT 5;
+
+5. Solving Potential Problems
+- Issue: pgloader cannot find .sqlite files
+  - Ensure the SQLITE_DIR path is correct and accessible.
+  - Use the full path instead of ~ for the directory, e.g., /home/your_user/path_to_sqlite_databases.
+
+- Issue: PostgreSQL asks for a password repeatedly
+  - Update the pg_hba.conf file:
+    sudo nano /etc/postgresql/16/main/pg_hba.conf
+  - Change:
+    local   all             all                                     peer
+  - To:
+    local   all             all                                     md5
+  - Restart PostgreSQL:
+    sudo systemctl restart postgresql
+
+- Issue: pgloader fails due to special characters in paths
+  - Quote the paths in the script, e.g.:
+    "$SQLITE_DIR/*.sqlite"
+
+- Issue: Databases or tables are missing
+  - Check the pgloader logs in /tmp/pgloader/ for detailed error messages.
+  - Ensure the SQLite databases are valid and contain data.
+
+6. Accessing PostgreSQL from GUI (e.g., DBeaver)
+6.1. Install DBeaver:
+   sudo snap install dbeaver-ce
+
+6.2. Connect to PostgreSQL:
+   - Host: localhost
+   - Port: 5432
+   - Username: postgres
+   - Password: Your postgres password
+
+6.3. Browse databases and tables through DBeaver’s UI.
+
