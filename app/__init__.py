@@ -10,6 +10,7 @@ from app.generation.view import router as generation_router
 from app.classification.view import router as classification_router
 from app.models.view import router as model_router
 from app.db.view import router as db_router
+from app.test.view import router as test_router
 
 import os
 
@@ -27,7 +28,8 @@ app = FastAPI(
         *generation_router.routes,
         *classification_router.routes,
         *model_router.routes,
-        *db_router.routes
+        *db_router.routes,
+        *test_router.routes
     ],
     dependencies=[],
 )

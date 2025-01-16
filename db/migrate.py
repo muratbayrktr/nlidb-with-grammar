@@ -10,7 +10,7 @@ PG_PORT = 5432
 PG_PASSWORD = ""  # Add password if required
 
 # Directory containing SQLite files
-SQLITE_DIR = os.path.expanduser("~/Downloads/dev_1")
+SQLITE_DIR = os.path.expanduser("/Users/muratbayrktr/Desktop/nlidb/mini_dev/llm/mini_dev_data/dev_databases")
 
 # Connect to PostgreSQL
 pg_conn = psycopg2.connect(

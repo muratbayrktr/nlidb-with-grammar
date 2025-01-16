@@ -2,7 +2,8 @@ from app.generation import router
 from app.generation.service import InferenceEngine
 from app.generation.model import (
     NLQRequest, 
-    InferenceResponseFormat
+    InferenceResponseFormat,
+    SQLGenerationResult
 )
 from fastapi import HTTPException
 import httpx  # For making HTTP requests to localhost endpoints.
@@ -17,7 +18,7 @@ async def infer(request : NLQRequest):
     """
     engine = InferenceEngine(
         model=request.model,
-        response_format=InferenceResponseFormat
+        response_format=SQLGenerationResult
     )
     try:
         # Step 1: Send the NLQ to the /all_incremental endpoint.

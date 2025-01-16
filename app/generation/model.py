@@ -19,7 +19,39 @@ class InferenceResponseFormat(BaseModel):
     The response format containing the steps and the final answer.
     """
     steps: list[Step]
-    final_answer: str
+    final_query: str
+
+
+class SQLSubquery(BaseModel):
+    """
+    A (potential) subquery needed in the final SQL, if any.
+    Keep these short and labeled for clarity.
+    """
+    label: str               # e.g. "SubQuery for filtering recent rows"
+    query: str               # The subquery itself
+
+class SQLCandidate(BaseModel):
+    """
+    Each candidate SQL solution your model might consider.
+    """
+    rationale: str           # Quick reason why the candidate might work
+    query: str               # Candidate SQL (possibly incomplete)
+
+class SQLReflection(BaseModel):
+    """
+    Short self-reflection on the correctness or rationale for picking the final query.
+    """
+    notes: str               # e.g. "Candidate #2 gave the correct join logic"
+
+class SQLGenerationResult(BaseModel):
+    """
+    The entire structure capturing how the final SQL statement came to be.
+    """
+    subqueries: SQLSubquery            # If your model uses subqueries, list them
+    candidates: SQLCandidate           # Potential SQL statements your model considers
+    reflection: Optional[SQLReflection]      # Brief, final self-analysis (optional but helpful)
+    final_query: str                         # A single syntactically valid SQL statement
+
 
 class ExtractTables(BaseModel):
     """
